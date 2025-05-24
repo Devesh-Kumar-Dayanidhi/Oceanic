@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <time.h>
 
 #include "core/Application.h"
 
@@ -14,10 +15,10 @@ public:
 
 	bool Flags() override
 	{
-		return (count >= 2);
+		return false;
 	}
 
-	void OnUpdate(float dt) override
+	void OnUpdate(clock_t dt) override
 	{
 		std::cout << "Update.\n";
 		count++;

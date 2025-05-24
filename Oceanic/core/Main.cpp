@@ -1,17 +1,21 @@
+#include <time.h>
+
 #include "Application.h"
 
 extern Application* FetchApplication();
 
 int main()
 {
-	Application* app = FetchApplication();
+	Application* application = FetchApplication();
+	clock_t start = 0, end = 0;
 
-	app->Start();
-	while (!app->Flags())
+	application->Start();
+	while (!application->Flags())
 	{
-		app->OnUpdate(0.01f);
+		start = clock();
+		application->OnUpdate(end - start);
+		end = clock();
 	}
 
-	app->End();
-	delete app;
+	application->End();
 }
