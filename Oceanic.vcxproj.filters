@@ -18,9 +18,15 @@
     <ClCompile Include="Oceanic\core\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Oceanic\OceanicGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Oceanic\core\OceanicApplication.h">
+    <ClInclude Include="Oceanic\core\Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Oceanic\OceanicGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,0 +1,32 @@
+#pragma once
+
+#include <iostream>
+
+#include "core/Application.h"
+
+class OceanicGame : public Application
+{
+public:
+	void Start() override
+	{
+		std::cout << "Start.\n";
+	}
+
+	bool Flags() override
+	{
+		return (count >= 2);
+	}
+
+	void OnUpdate(float dt) override
+	{
+		std::cout << "Update.\n";
+		count++;
+	}
+
+	void End() override
+	{
+		std::cout << "End.\n";
+	}
+private:
+	int count = 0;
+};

@@ -1,6 +1,17 @@
-#include <iostream>
+#include "Application.h"
+
+extern Application* FetchApplication();
 
 int main()
 {
-	std::cout << "Hello World.\n";
+	Application* app = FetchApplication();
+
+	app->Start();
+	while (!app->Flags())
+	{
+		app->OnUpdate(0.01f);
+	}
+
+	app->End();
+	delete app;
 }

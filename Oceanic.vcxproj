@@ -128,9 +128,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Oceanic\core\Main.cpp" />
+    <ClCompile Include="Oceanic\OceanicGame.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Oceanic\core\OceanicApplication.h" />
+    <ClInclude Include="Oceanic\core\Application.h" />
+    <ClInclude Include="Oceanic\OceanicGame.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
