@@ -1,10 +1,11 @@
 #include <time.h>
+#include <SDL3/SDL.h>
 
 #include "Application.h"
 
 extern Application* FetchApplication();
 
-int main()
+int main(int argc, const char** argv)
 {
 	Application* application = FetchApplication();
 	clock_t start = 0, end = 0;

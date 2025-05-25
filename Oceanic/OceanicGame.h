@@ -1,33 +1,28 @@
 #pragma once
 
 #include <iostream>
+#include <string>
 #include <time.h>
+#include <SDL3/SDL.h>
 
 #include "core/Application.h"
 
 class OceanicGame : public Application
 {
 public:
-	void Start() override
-	{
-		std::cout << "Start.\n";
-	}
-
-	bool Flags() override
-	{
-		return false;
-	}
-
-	void OnUpdate(clock_t dt) override
-	{
-		std::cout << "Update.\n";
-		count++;
-	}
-
-	void End() override
-	{
-		std::cout << "End.\n";
-	}
+	OceanicGame() :
+		m_ViewportWidth(0), m_ViewportHeight(0), m_Quit(false), window(nullptr), renderer(nullptr) {}
+	OceanicGame(const std::string& title, uint32_t width, uint32_t height) :
+		m_WindowTitle(title), m_ViewportWidth(width), m_ViewportHeight(height), m_Quit(false), window(nullptr), renderer(nullptr) {}
+public:
+	void Start() override;
+	bool Flags() override;
+	void OnUpdate(clock_t dt) override;
+	void End() override;
 private:
-	int count = 0;
+	uint32_t m_ViewportWidth, m_ViewportHeight;
+	std::string m_WindowTitle;
+	bool m_Quit;
+	SDL_Window* window;
+	SDL_Renderer* renderer;
 };
