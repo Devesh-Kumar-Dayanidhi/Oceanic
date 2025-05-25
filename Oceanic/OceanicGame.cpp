@@ -45,18 +45,45 @@ void OceanicGame::OnUpdate(clock_t dt)
 			m_Quit = true;
 			break;
 		case SDL_EVENT_KEY_DOWN:
-			if (event.key.key == SDLK_ESCAPE)
+			switch (event.key.key)
+			{
+			case SDLK_Q:
+				R += 5;
+				break;
+			case SDLK_A:
+				R -= 5;
+				break;
+			case SDLK_W:
+				G += 5;
+				break;
+			case SDLK_S:
+				G -= 5;
+				break;
+			case SDLK_E:
+				B += 5;
+				break;
+			case SDLK_D:
+				B -= 5;
+				break;
+			case SDLK_ESCAPE:
 				m_Quit = true;
+				break;
+			default:
+				break;
+			}
 			break;
 		default:
 			break;
 		}
 	}
 
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0xff, 0xff);
+	R = SDL_clamp(R, 0, 255);
+	G = SDL_clamp(G, 0, 255);
+	B = SDL_clamp(B, 0, 255);
+	SDL_SetRenderDrawColor(renderer, R, G, B, 0xff);
 	SDL_RenderClear(renderer);
 	SDL_RenderPresent(renderer);
-	SDL_Delay(1);
+	SDL_Delay(10);
 }
 
 void OceanicGame::End()

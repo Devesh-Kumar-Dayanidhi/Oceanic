@@ -25,4 +25,5 @@ private:
 	bool m_Quit;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+	uint32_t R, G, B;
 };
