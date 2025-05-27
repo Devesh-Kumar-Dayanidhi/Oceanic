@@ -24,6 +24,9 @@
     <ClCompile Include="Oceanic\OceanicRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Oceanic\core\Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Oceanic\core\Application.h">
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Oceanic\OceanicRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Oceanic\core\Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
