@@ -4,6 +4,7 @@
 #include <string>
 #include <time.h>
 #include <SDL3/SDL.h>
+#include <glm/glm.hpp>
 
 #include "core/Application.h"
 
@@ -31,5 +32,6 @@ private:
 	SDL_Texture* texture;
 	bool m_Quit;
 	clock_t m_Time;
-	int count;
+	glm::vec2 cameraPosition = glm::vec2(2, 2);
+	glm::vec2 cameraDirection = glm::normalize(glm::vec2(1, 0));
 };

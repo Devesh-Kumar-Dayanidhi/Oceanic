@@ -10,3 +10,15 @@ uint32_t Utils::Vec4ToRGBA(const glm::vec4& color)
 	uint32_t result = (a << 24) | (b << 16) | (g << 8) | r;
 	return result;
 }
+
+glm::vec2 Utils::NDCToScreenSpace(glm::vec2 coord, uint32_t width, uint32_t height)
+{
+	coord = 0.5f * glm::vec2(width, height) * (coord + 1.0f);
+	return coord;
+}
+
+glm::vec2 Utils::ScreenSpaceToNDC(glm::vec2 coord, uint32_t width, uint32_t height)
+{
+	coord = (coord / glm::vec2(width, height)) * 2.0f - 1.0f;
+	return coord;
+}
