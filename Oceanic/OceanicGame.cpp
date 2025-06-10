@@ -12,24 +12,6 @@
 #define GREEN_WALL 2
 #define BLUE_WALL 3
 
-static void FillRectangle(float rx, float ry, float width, float height, const glm::vec4& color, uint32_t* data, uint32_t vw, uint32_t vh)
-{
-	ry *= -1.0f;
-	glm::vec2 bottomLeft = glm::vec2(rx - 0.5f * width, ry - 0.5f * height);
-	glm::vec2 topRight = glm::vec2(rx + 0.5f * width, ry + 0.5f * height);
-	bottomLeft = Utils::NDCToScreenSpace(bottomLeft, vw, vh);
-	topRight = Utils::NDCToScreenSpace(topRight, vw, vh);
-
-	for (uint32_t y = (uint32_t)bottomLeft.y; y < (uint32_t)topRight.y; y++)
-	{
-		for (uint32_t x = (uint32_t)bottomLeft.x; x < (uint32_t)topRight.x; x++)
-		{
-			uint32_t index = x + y * vw;
-			data[index] = Utils::Vec4ToRGBA(color);
-		}
-	}
-}
-
 static void VerticalLine(float xStartF, float yStartF, float yEndF, float lineWidthF, const glm::vec4& color, uint32_t* data, uint32_t vw, uint32_t vh)
 {
 	int xStart = std::max(0, static_cast<int>(xStartF));
@@ -64,20 +46,31 @@ void OceanicGame::Start()
 		SDL_Log("SDL_CreateWindow error: %s", SDL_GetError());
 		exit(2);
 	}
-	SDL_SetWindowFullscreen(window, true);
+
+	if (!SDL_SetWindowFullscreen(window, true))
+	{
+		SDL_Log("SDL_SetWindowFullscreen error: %s", SDL_GetError());
+		exit(3);
+	}
+
+	if (!SDL_HideCursor())
+	{
+		SDL_Log("SDL_HideCursor error: %s", SDL_GetError());
+		exit(4);
+	}
 
 	renderer = SDL_CreateRenderer(window, NULL);
 	if (!renderer)
 	{
 		SDL_Log("SDL_CreateRenderer error: %s", SDL_GetError());
-		exit(3);
+		exit(5);
 	}
 
 	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, m_ViewportWidth, m_ViewportHeight);
 	if (!texture)
 	{
 		SDL_Log("SDL_CreateTexture error: %s", SDL_GetError());
-		exit(4);
+		exit(6);
 	}
 }
 
@@ -89,14 +82,14 @@ bool OceanicGame::Flags()
 void OceanicGame::OnUpdate(clock_t dt)
 {
 	float moveSpeed = 0.2f;
-	float rotationSpeed = 1.0f;
+	float rotationSpeed = 2.0f;
 
 	uint32_t map[8][8] = {
 		{1, 2, 3, 1, 2, 3, 1, 2},
 		{2, 0, 0, 0, 0, 0, 0, 3},
-		{3, 0, 0, 0, 0, 0, 0, 2},
+		{3, 0, 1, 1, 3, 3, 0, 2},
 		{1, 0, 0, 0, 0, 0, 0, 1},
-		{2, 0, 0, 0, 0, 0, 0, 3},
+		{2, 0, 0, 0, 2, 0, 0, 3},
 		{3, 0, 0, 0, 0, 0, 0, 2},
 		{1, 0, 0, 0, 0, 0, 0, 1},
 		{2, 3, 1, 2, 3, 1, 2, 3},
@@ -113,7 +106,6 @@ void OceanicGame::OnUpdate(clock_t dt)
 	}
 
 	float fov = 90.0f;
-	float halfFOV = fov * 0.5f;
 	float angleStep = fov / static_cast<float>(m_ViewportWidth);
 	float cameraAngle = atan2(cameraDirection.y, cameraDirection.x);
 
@@ -164,16 +156,16 @@ void OceanicGame::OnUpdate(clock_t dt)
 		}
 
 		float correctedDistance = t * cos(angle - cameraAngle);
-		float wallHeight = (correctedDistance > 0.001f) ? m_ViewportHeight / correctedDistance : m_ViewportHeight;
+		float tileHeight = 2.0f;
+		float wallHeight = (correctedDistance > 0.001f) ? (m_ViewportHeight * tileHeight) / correctedDistance : m_ViewportHeight;
 
 		if (wallHeight >= m_ViewportHeight)
 			wallHeight = m_ViewportHeight - 1;
 
 		float yStart = (m_ViewportHeight - wallHeight) / 2.0f;
 		float yEnd = yStart + wallHeight;
-		int lineWidth = m_ViewportWidth / fov;
 
-		VerticalLine(x, yStart, yEnd, lineWidth, finalColor, m_ImageData, m_ViewportWidth, m_ViewportHeight);
+		VerticalLine(x, yStart, yEnd, 1.0f, finalColor, m_ImageData, m_ViewportWidth, m_ViewportHeight);
 	}
 
 
@@ -188,68 +180,72 @@ void OceanicGame::OnUpdate(clock_t dt)
 	SDL_RenderPresent(renderer);
 
 	SDL_Event event;
+	float deltaTime = 0.17f;
+
 	while (SDL_PollEvent(&event))
 	{
-		glm::vec2 oldCameraPosition = cameraPosition;
-
 		switch (event.type)
 		{
 		case SDL_EVENT_QUIT:
 			m_Quit = true;
 			break;
-		case SDL_EVENT_KEY_DOWN:
-		{
-			glm::vec2 forward = glm::normalize(cameraDirection);
-			glm::vec2 right = glm::vec2(-forward.y, forward.x); // Perpendicular
 
-			switch (event.key.key)
-			{
-			case SDLK_ESCAPE:
+		case SDL_EVENT_KEY_DOWN:
+			if (event.key.key == SDLK_ESCAPE)
 				m_Quit = true;
-				break;
-			case SDLK_W:
-				cameraPosition += forward * moveSpeed;
-				break;
-			case SDLK_S:
-				cameraPosition -= forward * moveSpeed;
-				break;
-			case SDLK_D:
-				cameraPosition += right * moveSpeed;
-				break;
-			case SDLK_A:
-				cameraPosition -= right * moveSpeed;
-				break;
-			case SDLK_RIGHT:
-			{
-				float angle = Utils_DegToRad(rotationSpeed);
-				float cs = cos(angle), sn = sin(angle);
-				cameraDirection = glm::normalize(glm::vec2(
-					cameraDirection.x * cs - cameraDirection.y * sn,
-					cameraDirection.x * sn + cameraDirection.y * cs
-				));
-			}
 			break;
-			case SDLK_LEFT:
-			{
-				float angle = Utils_DegToRad(-rotationSpeed);
-				float cs = cos(angle), sn = sin(angle);
-				cameraDirection = glm::normalize(glm::vec2(
-					cameraDirection.x * cs - cameraDirection.y * sn,
-					cameraDirection.x * sn + cameraDirection.y * cs
-				));
-			}
-			break;
-			default:
-				break;
-			}
-		}
-		break;
+
 		default:
 			break;
 		}
+	}
 
-		if (map[static_cast<uint32_t>(cameraPosition.y)][static_cast<uint32_t>(cameraPosition.x)] > 0)
-			cameraPosition = oldCameraPosition;
+	glm::vec2 acceleration(0.0f);
+
+	glm::vec2 forward = glm::normalize(cameraDirection);
+	glm::vec2 right(-forward.y, forward.x);
+
+	const Uint8* keystate = (const Uint8*)SDL_GetKeyboardState(NULL);
+	if (keystate[SDL_SCANCODE_W]) acceleration += forward * moveSpeed;
+	if (keystate[SDL_SCANCODE_S]) acceleration -= forward * moveSpeed;
+	if (keystate[SDL_SCANCODE_D]) acceleration += right * moveSpeed;
+	if (keystate[SDL_SCANCODE_A]) acceleration -= right * moveSpeed;
+	if (keystate[SDL_SCANCODE_RIGHT])
+	{
+		float angle = Utils_DegToRad(rotationSpeed);
+		float cs = cos(angle), sn = sin(angle);
+		cameraDirection = glm::normalize(glm::vec2(
+			cameraDirection.x * cs - cameraDirection.y * sn,
+			cameraDirection.x * sn + cameraDirection.y * cs
+		));
+	}
+	if (keystate[SDL_SCANCODE_LEFT])
+	{
+		float angle = Utils_DegToRad(-rotationSpeed);
+		float cs = cos(angle), sn = sin(angle);
+		cameraDirection = glm::normalize(glm::vec2(
+			cameraDirection.x * cs - cameraDirection.y * sn,
+			cameraDirection.x * sn + cameraDirection.y * cs
+		));
+	}
+
+	glm::vec2 oldCameraPosition = cameraPosition;
+
+	const float maxSpeed = 3.0f;
+
+	velocity += acceleration * deltaTime;
+	velocity *= 0.95f;
+	if (glm::length(velocity) > maxSpeed)
+		velocity = glm::normalize(velocity) * maxSpeed;
+
+	cameraPosition += velocity * deltaTime;
+
+	uint32_t mapX = static_cast<uint32_t>(cameraPosition.x);
+	uint32_t mapY = static_cast<uint32_t>(cameraPosition.y);
+	if (mapY < mapHeight && mapX < mapWidth && map[mapY][mapX] > 0)
+	{
+		cameraPosition = oldCameraPosition;
+		velocity = glm::vec2(0.0f);
 	}
 
 	SDL_Delay(17);

@@ -32,6 +32,8 @@ private:
 	SDL_Texture* texture;
 	bool m_Quit;
 	clock_t m_Time;
-	glm::vec2 cameraPosition = glm::vec2(2, 2);
+	glm::vec2 cameraPosition = glm::vec2(3, 3);
 	glm::vec2 cameraDirection = glm::normalize(glm::vec2(1, 0));
+	glm::vec2 velocity = glm::vec2(0.0f);
+	glm::vec2 acceleration = glm::vec2(0.0f);
 };

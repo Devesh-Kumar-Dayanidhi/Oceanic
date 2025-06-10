@@ -21,7 +21,7 @@
     <ClCompile Include="Oceanic\OceanicGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Oceanic\OceanicRenderer.cpp">
+    <ClCompile Include="Oceanic\core\OceanicRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Oceanic\core\Utils.cpp">
@@ -35,10 +35,16 @@
     <ClInclude Include="Oceanic\OceanicGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Oceanic\OceanicRenderer.h">
+    <ClInclude Include="Oceanic\core\OceanicRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Oceanic\core\Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Oceanic\core\OceanicScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Oceanic\core\OceanicCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

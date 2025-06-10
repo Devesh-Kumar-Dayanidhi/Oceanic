@@ -142,13 +142,15 @@
     <ClCompile Include="Oceanic\core\Main.cpp" />
     <ClCompile Include="Oceanic\core\Utils.cpp" />
     <ClCompile Include="Oceanic\OceanicGame.cpp" />
-    <ClCompile Include="Oceanic\OceanicRenderer.cpp" />
+    <ClCompile Include="Oceanic\core\OceanicRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Oceanic\core\OceanicCamera.h" />
+    <ClInclude Include="Oceanic\core\OceanicScene.h" />
     <ClInclude Include="Oceanic\core\Application.h" />
     <ClInclude Include="Oceanic\core\Utils.h" />
     <ClInclude Include="Oceanic\OceanicGame.h" />
-    <ClInclude Include="Oceanic\OceanicRenderer.h" />
+    <ClInclude Include="Oceanic\core\OceanicRenderer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
