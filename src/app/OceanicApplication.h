@@ -1,6 +1,7 @@
 #pragma once
 
 #include <core/Application.h>
+#include <stdint.h>
 #include <string>
 
 class OceanicApplication : public Oceanic::Application
